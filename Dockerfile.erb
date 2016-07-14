@@ -1,0 +1,27 @@
+# encoding: UTF-8
+
+FROM <%= ENV.fetch('FROM') %>
+MAINTAINER The Blue Beluga <admin@bluebeluga.io>
+
+LABEL vendor="The Blue Beluga Company"
+LABEL io.bluebeluga.s6.description="CentOS with an s6 process supervisor"
+LABEL io.bluebeluga.s6.version="<%= ENV.fetch('S6_VERSION') %>"
+LABEL io.bluebeluga.s6.git-revision="<%= ENV.fetch('GIT_REVISION') %>"
+LABEL io.bluebeluga.s6.release-date="<%= Time.now.strftime('%B %d, %Y %H:%M') %>"
+
+ENV S6_VERSION=<%= ENV.fetch('S6_VERSION') %>
+
+RUN yum -y install tar && \
+    gpg --keyserver pgp.mit.edu --recv-key 0x337EE704693C17EF && \
+    curl -SLO "https://github.com/just-containers/s6-overlay/releases/download/v$S6_VERSION/s6-overlay-amd64.tar.gz" && \
+    curl -SLO "https://github.com/just-containers/s6-overlay/releases/download/v$S6_VERSION/s6-overlay-amd64.tar.gz.sig" && \
+    gpg --batch --verify "s6-overlay-amd64.tar.gz.sig" "s6-overlay-amd64.tar.gz" && \  
+    tar xzf "s6-overlay-amd64.tar.gz" -C / --exclude="./bin" --exclude="./sbin" && \
+    tar xzf "s6-overlay-amd64.tar.gz" -C /usr ./bin ./sbin && \
+    yum clean all && \
+    rm -rfv "s6-overlay-amd64.tar.gz" "s6-overlay-amd64.tar.gz.sig" \
+            /root/.gnupg /tmp/* /var/tmp/* /var/cache/*
+
+COPY files/rootfs /
+ENTRYPOINT ["/init"]
+CMD []
