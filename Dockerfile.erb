@@ -4,8 +4,8 @@ FROM <%= ENV.fetch('FROM') %>
 MAINTAINER The Blue Beluga <admin@bluebeluga.io>
 
 LABEL vendor="The Blue Beluga Company"
-LABEL io.bluebeluga.s6.description="CentOS with an s6 process supervisor"
-LABEL io.bluebeluga.s6.version="<%= ENV.fetch('S6_VERSION') %>"
+LABEL io.bluebeluga.s6.description="S6 process supervisor"
+LABEL io.bluebeluga.s6.version="<%= ENV.fetch('TAG') %>"
 LABEL io.bluebeluga.s6.git-revision="<%= ENV.fetch('GIT_REVISION') %>"
 LABEL io.bluebeluga.s6.release-date="<%= Time.now.strftime('%B %d, %Y %H:%M') %>"
 
